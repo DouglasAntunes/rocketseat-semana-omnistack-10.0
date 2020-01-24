@@ -2,28 +2,55 @@ import React, { useState, useEffect } from 'react';
 
 import './styles.css';
 
-function DevForm({ onSubmit }) {
+function DevForm({ onSubmit, onUpdate, valuesObj }) {
     const [github_username, setGithubUsername] = useState('');
     const [techs, setTechs] = useState('');
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     
-    useEffect(() =>  {
-        navigator.geolocation.getCurrentPosition(
+    const [editMode, setEditMode] = useState(false);
+
+    function getCurrentPos() {
+      navigator.geolocation.getCurrentPosition(
         (position) => {
             const { latitude, longitude } = position.coords;
             setLatitude(latitude);
             setLongitude(longitude);
         }, (err) => console.log(err),
         { timeout: 30000 /*30 secs*/}
-        );
+      );
+    }
+    
+    useEffect(() =>  {
+        getCurrentPos();
     }, []);
+
+    useEffect(() => {
+      if(valuesObj) {
+        setEditMode(true);
+        setGithubUsername(valuesObj.github_username);
+        setTechs(valuesObj.techs.join(', '));
+      }
+    }, [valuesObj]);
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await onSubmit({ github_username, techs, latitude, longitude });
+        if(!editMode) {
+          await onSubmit({ github_username, techs, latitude, longitude });
+        } else {
+          await onUpdate({ github_username, techs, latitude, longitude });
+          setEditMode(false);
+        }
         setGithubUsername('');
         setTechs('');
+    }
+
+    async function handleCancelEdit(e) {
+      e.preventDefault();
+      setGithubUsername('');
+      setTechs('');
+      getCurrentPos();
+      setEditMode(false);
     }
 
     return (
@@ -31,6 +58,7 @@ function DevForm({ onSubmit }) {
           <div className="input-block">
             <label htmlFor="github_username">Usuário do GitHub</label>
             <input name="github_username" id="github_username"
+              disabled={editMode}
               value={github_username} onChange={(e) => setGithubUsername(e.target.value)} required />
           </div>
           <div className="input-block">
@@ -52,7 +80,12 @@ function DevForm({ onSubmit }) {
             </div>
           </div>
 
-          <button type="submit">Salvar</button>
+          {!editMode ? (
+            <button type="submit">Salvar</button>
+          ) : (<>
+            <button type="submit">Editar</button>
+            <button className="btn-cancel" onClick={handleCancelEdit}>Cancelar</button>
+          </>)}
         </form>
     );
 }
