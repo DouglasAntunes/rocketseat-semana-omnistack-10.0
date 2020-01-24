@@ -31,8 +31,6 @@ module.exports = {
             const sendSocketMessageTo = findConnections({ latitude, longitude }, techsArray);
             sendMessage(sendSocketMessageTo, 'new-dev', dev);
         }
-
-    
         return response.json(dev);
     },
 
@@ -53,6 +51,10 @@ module.exports = {
                 github_username, name, avatar_url, bio,
                 techs: techsArray, location,
             });
+            operation.updatedDev = {
+                github_username, name, avatar_url, bio,
+                techs: techsArray, location
+            };
         }
         return response.json(operation);
     },

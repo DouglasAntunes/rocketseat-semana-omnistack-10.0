@@ -49,3 +49,39 @@ li.dev-item a {
 li.dev-item a:hover {
     color: #5a2ea6;
 }
+
+div.edit {
+    margin-left: auto;
+    align-self: flex-start;
+    position: relative;
+    font-size: 14px;
+}
+
+div.edit:hover .edit-menu {
+    display: block;
+}
+
+ul.edit-menu {
+    display: none;
+    min-width: 6em;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 16px 20px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    z-index: 2;
+    right: -1em;
+    position: absolute;
+}
+
+ul.edit-menu li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.edit-menu .icon {
+    margin-right: 6px;
+}
+
+ul.edit-menu li:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
