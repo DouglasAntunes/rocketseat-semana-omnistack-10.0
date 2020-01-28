@@ -5,10 +5,12 @@ const parseStringAsArray = require('../utils/parseStringAsArray');
 module.exports = {
     async index(request, response) {
         const { latitude, longitude, techs } = request.query;
-        const techsArray = parseStringAsArray(techs);
-        
+        const techsArrayRegex = [];
+        parseStringAsArray(techs)
+            .forEach(tech => techsArrayRegex.push(new RegExp(tech, "i")));
+
         const devs = await Dev.find({
-            techs: { $in: techsArray },
+            techs: { $in: techsArrayRegex },
             location: {
                 $near: {
                     $geometry: {
